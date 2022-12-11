@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+</html>
+<head>
+    <meta charset="UTF-8">
+    <title>Task1D</title>
+</head>
+<body>
+<div>
+  <p th:if="${recipe} != null" th:text="${recipe.getName()}"></p>
+  <p th:if="${recipe} != null" th:text="${recipe.getCuisine()}"></p>
+  <p th:if="${recipe} != null" th:text="${recipe.getIngredients()}"></p>
+  <a th:if="${recipe} != null" th:href="${recipe.getTechnology()}">Recipe</a>
+</div>
+<form action="/">
+  <input type="submit" value="назад к поиску">
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
+</body>
+</html>

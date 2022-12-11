@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Удалить рецепт</title>
+</head>
+<body>
+<form action="/deleteRecipe">
+    <select name="name">
+    <option th:each="name : ${listNames}" th:text="${name}"></option>
+    </select>
+    <input type="submit" value="delete">
+
+</form>
+<br>
+<form action="/">
+    <input type="submit" value="назад к поиску">
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
+
+<script>
+    console.log("delete script")
+    $.ajax({
+        url: "/delete",
+        type: "GET",
+        contentType: "html"
+    });
+</script>
+
+</body>
+</html>

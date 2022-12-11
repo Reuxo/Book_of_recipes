@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+<br>
+<form th:action="@{/login}" method="post">
+    <input type="submit" value="Sign In"/>
+</form>
+<br>
+<!--    Task 4 A-->
+<form th:if="${isAdmin}" action="/add">
+    <input type="submit">добавить рецепт</input>
+</form>
+
+<!--    Task 4 B-->
+<form th:if="${isAdmin}" action="/delete">
+    <input type="submit">удалить рецепт</input>
+</form>
+
+<!--    Task 4 C-->
+<form th:if="${isAdmin}" action="/update">
+    <input type="submit">обновить рецепт</input>
+</form>
+
+<!--th:if="${!isAdmin}"-->
+<!--        Task A and B-->
+    <form id="Task1AB">
+        <p>Запрос по названию блюда</p>
+        <select id="selectDish" name="name">
+            <option th:each="name:${listNames}" th:text="${name}"></option>
+        </select>
+        <div>
+            <label for="firstARadio">Краткая информация по рецепту</label>
+            <input id="firstARadio" type="radio" name="isLink" value="/firstA">
+            <label for="firstBRadio">Ссылка</label>
+            <input id="firstBRadio" type="radio" name="isLink" value="/firstB">
+        </div>
+        <input type="submit" value="submit">
+    </form>
+<!--            Task C-->
+    <form id="ingredientsRequest" action="/firstC">
+        <p>Запрос по ингредиентам</p>
+        <select id="selectIngredients" name="ingredients">
+            <option th:each="ingredients:${setOfIngredients}" th:text="${ingredients}"></option>
+        </select>
+        <div>
+        <input id="ingr1" name="ingr1" type="text" hidden>
+        <input id="ingr2" name="ingr2" type="text" hidden>
+        <input id="ingr3" name="ingr3" type="text" hidden>
+        <input id="ingr4" name="ingr4" type="text" hidden>
+        </div>
+        <input type="submit" value="submit">
+    </form>
+<!--        Task D-->
+    <form id="randomRequest" action="/firstD">
+        <p>Рандомный запрос</p>
+        <input type="submit" value="random recipe">
+    </form>
+
+<!--        Task 2 A-->
+    <form id="allTagsRequest" action="/secondA">
+        <p>Запрос списка тегов</p>
+        <input type="submit" value="submit">
+    </form>
+<!--            Task 2 B-->
+    <form id="top3Request" action="/secondB">
+        <p>Запрос Top 3 блюда</p>
+        <select id="selectTag" name="tag">
+            <option th:each="tag:${allTags}" th:text="${tag}"></option>
+        </select>
+        <input type="submit" value="submit">
+    </form>
+<!--    Task 2 C-->
+    <form id="randomDinner" action="/secondC">
+        <p>Ужин из 3 блюд</p>
+        <input type="submit" value="Получить">
+</form>
+<!--    Task 2 D-->
+    <form id="randomBreakfast" action="/secondD">
+        <p>Случайный завтрак</p>
+        <input type="submit" value="Получить">
+</form>
+<!--      Task 2 E-->
+    <form id="ingredientsIgnorRequest" action="/secondE">
+        <p>Запрос по ингредиентам</p>
+        <select id="selectIgnorIngredients" name="ingredients">
+            <option th:each="ingredients:${setOfIngredients}" th:text="${ingredients}"></option>
+        </select>
+    <div>
+        <input id="ignor1" name="ingr1" type="text" hidden>
+        <input id="ignor2" name="ingr2" type="text" hidden>
+        <input id="ignor3" name="ingr3" type="text" hidden>
+        <input id="ignor4" name="ingr4" type="text" hidden>
+    </div>
+    <input type="submit" value="submit">
+</form>
+
+<!--    Task 3 A-->
+    <form id="top3CuisineRequest" action="/thirdA">
+        <p>Запрос Top 3 блюда кухонь мира</p>
+        <select id="selectCuisine" name="cuisine">
+            <option th:each="cuisine:${allCuisine}" th:text="${cuisine}"></option>
+        </select>
+    <input type="submit" value="submit">
+</form>
+<!--   Task 3 B-->
+    <form id="ratingByCuisine" action="/thirdB">
+        <p>Топ 3 кухонь мира</p>
+    <input type="submit" value="submit">
+</form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
+<!--    <script type="text/javascript" th:src="@{/script.js}"></script>-->
+
+    <script>
+        let firstARadio = $('#firstARadio');
+        let firstBRadio = $('#firstBRadio');
+        let Task1AB = $('#Task1AB');
+        let selectIngredients = $('#selectIngredients');
+        let selectIgnorIngredients = $('#selectIgnorIngredients')
+
+            // Task1C
+        let ingredientsAmount = 0;
+        selectIngredients.change(function (){
+            ingredientsAmount++;
+            if(ingredientsAmount < 5) {
+                let input = $('#ingr' + ingredientsAmount);
+                input.val(selectIngredients.val());
+                input.show();
+            }else {
+                for (let i = 1; i < 5; i++) {
+                    let input = $('#ingr' + i);
+                    input.val("");
+                    input.hide();
+                }
+                ingredientsAmount = 1;
+                let input = $('#ingr' + ingredientsAmount);
+                input.val(selectIngredients.val());
+                input.show();
+            }
+        })
+        // Task2E
+        let ingredientsAmountSecondD = 0;
+        selectIgnorIngredients.change(function () {
+            ingredientsAmountSecondD++;
+            if (ingredientsAmountSecondD < 5) {
+                let input = $('#ignor' + ingredientsAmountSecondD);
+                input.val(selectIgnorIngredients.val());
+                input.show();
+            } else {
+                for (let i = 1; i < 5; i++) {
+                    let input = $('#ignor' + i);
+                    input.val("");
+                    input.hide();
+                }
+                ingredientsAmountSecondD = 1;
+                let input = $('#ignor' + ingredientsAmountSecondD);
+                input.val(selectIgnorIngredients.val());
+                input.show();
+            }
+        })
+
+        $.ajax({
+            url: "/",
+            type: "GET",
+            contentType: "html"
+        });
+
+        $('#selectDish').change(function () {
+            let isLink = document.querySelectorAll('input[name = "isLink"]')
+            for (let link of isLink)
+                if (link.checked)
+                    Task1AB.attr("action", link.value);
+        });
+
+        //замена экшена у радио кнопки
+        firstARadio.change(function () {
+            if (!firstARadio.is("checked", true))
+                Task1AB.attr("action", firstARadio.val())
+        });
+        firstBRadio.change(function () {
+            if(!firstBRadio.is("checked", true))
+                Task1AB.attr("action", firstBRadio.val())
+        });
+
+        //автоматический выбор при старте странице
+        firstARadio.prop('checked', true);
+        Task1AB.attr("action", "/firstA");
+
+    </script>
+</body>
+</html>

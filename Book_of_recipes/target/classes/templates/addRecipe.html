@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>addRecipe</title>
+</head>
+<body>
+  <p>Форма добавления рецепта</p>
+  <form action="/addRecipe">
+      <div>
+        <input type="text" name="name" placeholder="Name">
+      </div>
+      <br>
+      <div>
+        <input type="text" name="cuisine" placeholder="Cuisine">
+      </div>
+      <br>
+      <div id="ingrList">
+        <input id="ingredients" type="text" placeholder="Ingredients">
+        <input id="addIngrButton" type="button" value="Add">
+        <textarea id="addIngrTA" name="addIngrTA"></textarea>
+      </div>
+      <br>
+      <div>
+          <select name="type">
+              <option>завтраки</option>
+              <option>первые блюда</option>
+              <option>вторые блюда</option>
+              <option>десерты</option>
+          </select>
+      </div>
+      <br>
+      <div id="tagList">
+          <input id="tags" type="text" name="tags" placeholder="Tags">
+          <input id="addTagButton" type="button" value="Add">
+          <textarea id="addTagTA" name="addTagTA"></textarea>
+      </div>
+      <br>
+      <div>
+        <input type="text" name="technology" placeholder="Technology">
+      </div>
+      <br>
+      <div>
+        <input type="text" name="link" placeholder="Link">
+      </div>
+      <br>
+      <div>
+        <input type="text" name="rating" placeholder="Rating">
+      </div>
+      <br>
+      <input type="submit" value="add">
+  </form>
+    <br>
+  <form action="/">
+      <input type="submit" value="назад к поиску">
+  </form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
+<script>
+let addIngrButton = $('#addIngrButton');
+let countIngr = 0;
+let addTagButton = $('#addTagButton');
+let countTag = 0;
+
+addIngrButton.on("click", function (){
+    let textArea = $('#addIngrTA');
+    let ingredients = $('#ingredients');
+    if(ingredients.val() === "")
+        return;
+    countIngr++;
+    if(countIngr !== 1)
+        textArea.val(textArea.val() + "," + ingredients.val())
+    else
+        textArea.val(ingredients.val());
+    if(countIngr === 15){
+        addIngrButton.attr('disabled', 'disabled');
+    }
+    ingredients.val("");
+})
+
+
+
+addTagButton.on("click", function (){
+    let textArea = $('#addTagTA');
+    let ingredients = $('#tags');
+    if(ingredients.val() === "")
+        return;
+    countTag++;
+    if(countTag !== 1)
+        textArea.val(textArea.val() + "," + ingredients.val())
+    else
+        textArea.val(ingredients.val());
+    if(countTag === 5){
+        addTagButton.attr('disabled', 'disabled');
+    }
+    ingredients.val("");
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Recipe</title>
+</head>
+<body>
+<select id="selectName">
+    <option th:each="name:${listNames}" th:text="${name}"></option>
+</select>
+<br>
+<form action="/updateRecipe">
+    <br>
+    <div>
+        <input id="formerName" type="text" name="formerName" th:value="${firstRecipe.getName()}" hidden>
+    </div>
+    <br>
+    <div>
+        <input type="text" id="futureName" name="futureName" placeholder="name" th:value="${firstRecipe.getName()}">
+    </div>
+    <br>
+    <div>
+        <input type="text" name="cuisine" id="cuisine" placeholder="cuisine" th:value="${firstRecipe.getCuisine()}">
+    </div>
+    <br>
+    <div id="ingrList">
+        <input id="ingredients" type="text" placeholder="add ingredients">
+        <input id="addIngrButton" type="button" value="add">
+        <textarea id="addIngrTA" name="ingredientsTA" th:text="${firstRecipe.getIngredients()}"></textarea>
+        <input id="delIngrButton" type="button" value="delete">
+        <input id="ingredientsToDelete" type="text" placeholder="delete ingredients">
+
+    </div>
+    <br>
+    <div>
+        <select id="selectType" name="type" th:value="${firstRecipe.getType()}">
+            <option>завтраки</option>
+            <option>первые блюда</option>
+            <option>вторые блюда</option>
+            <option>десерты</option>
+        </select>
+    </div>
+    <br>
+    <div id="tagList">
+        <input id="tags" type="text" name="tags" placeholder="add tags">
+        <input id="addTagButton" type="button" value="Add">
+        <textarea id="addTagTA" name="tagsTA" th:text="${tags}"></textarea>
+        <input id="delTagButton" type="button" value="delete">
+        <input id="tagsToDelete" type="text" placeholder="delete tags">
+    </div>
+    <br>
+    <div>
+        <input type="text" id="technology" name="technology" placeholder="technology" th:value="${firstRecipe.getTechnology()}">
+    </div>
+    <br>
+    <div>
+        <input type="text" id="link" name="link" placeholder="link" th:value="${firstRecipe.getLink()}">
+    </div>
+    <br>
+    <div>
+        <input type="text" id="rating" name="rating" placeholder="rating" th:value="${firstRecipe.getRating()}">
+    </div>
+    <br>
+    <input type="submit" value="update Recipe">
+</form>
+
+<br>
+<form action="/">
+    <input type="submit" value="назад к поиску">
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
+<script>
+    let select = $("#selectName");
+    let addIngrButton = $('#addIngrButton');
+    let delIngrButton = $("#delIngrButton");
+    let addIngrTA = $('#addIngrTA');
+    let countIngr;
+    let addTagButton = $('#addTagButton');
+    let delTagButton = $('#delTagButton');
+    let addTagTA = $("#addTagTA");
+    let countTag;
+
+
+    $.ajax({
+        url: "/update",
+        type: "GET",
+        contentType: "html",
+    });
+    listener();
+
+    select.on("change", function () {
+        listener();
+    })
+
+    function listener() {
+        console.log("отрабатывает")
+        $.ajax({
+            url: "/getRecipeToUpdate",
+            type: "GET",
+            contentType: "html",
+            data: {
+                name: select.val()
+            },
+            success: (function (data) {
+                $("#formerName").val(data.name);
+                $("#futureName").val(data.name);
+                $("#cuisine").val(data.cuisine);
+                $("#addIngrTA").val(data.ingredients);
+                let tags = [];
+                if (data.tags.length > 1)
+                    for (let i = 2; i < data.tags.length; i++)
+                        tags[i - 2] = data.tags[i];
+                $("#addTagTA").val(tags);
+                $("#technology").val(data.technology);
+                $("#link").val(data.link);
+                $("#rating").val(data.rating);
+                $("#selectType").val(data.type);
+                countIngr = data.ingredients.length;
+                countTag = data.tags.length - 2;
+            })
+        });
+    }
+
+
+    addIngrButton.on("click", function(){
+        let ingredient = $('#ingredients');
+        if(ingredient.val() === "")
+            return;
+        countIngr++;
+        if(countIngr !== 1)
+            addIngrTA.val(addIngrTA.val() + "," + ingredient.val());
+        else
+            addIngrTA.val(ingredient.val());
+        if(countIngr === 15){
+            addIngrButton.attr('disabled', 'disabled');
+        }
+        ingredient.val("");
+    });
+    delIngrButton.on("click", function(){
+        let ingredient = $("#ingredientsToDelete");
+        if(ingredient.val() === "")
+            return;
+        if (addIngrTA.val().lastIndexOf(ingredient.val() + ",") > -1 ||
+            addIngrTA.val().lastIndexOf(ingredient.val()) === addIngrTA.val().length - ingredient.val().length)
+            deleteFromTA(addIngrTA, ingredient.val(), false);
+        else
+            console.log("not contains")
+        ingredient.val("");
+    });
+
+    addTagButton.on("click", function (){
+        let textArea = $('#addTagTA');
+        let ingredients = $('#tags');
+        if(ingredients.val() === "")
+            return;
+        countTag++;
+        if(countTag !== 1)
+            textArea.val(textArea.val() + "," + ingredients.val())
+        else
+            textArea.val(ingredients.val());
+        if(countTag === 5){
+            addTagButton.attr('disabled', 'disabled');
+        }
+        ingredients.val("");
+    });
+    delTagButton.on("click", function(){
+        let tag = $("#tagsToDelete");
+        if(tag.val() === "")
+            return;
+        if (addTagTA.val().lastIndexOf(tag.val() + ",") > -1 ||
+            addTagTA.val().lastIndexOf(tag.val()) === addTagTA.val().length - tag.val().length)
+            deleteFromTA(addTagTA, tag.val(), true);
+        else
+            console.log("not contains")
+        tag.val("");
+    });
+
+    function deleteFromTA(textArea, string, isTag) {
+        if (textArea.val().lastIndexOf(string + ",") === 0) {
+            console.log(textArea.val().lastIndexOf(string + ","))
+            textArea.val(textArea.val().substring(1 + string.length));
+        } else if ((textArea.val().lastIndexOf(string + ",") < textArea.val().length - string.length - 1) &&
+            textArea.val().lastIndexOf(string + ",") !== -1) {
+            textArea.val(textArea.val().substring(0, textArea.val().lastIndexOf(string + ",")) +
+                textArea.val().substring(textArea.val().lastIndexOf(string + ",") + string.length + 1));
+        } else if ((textArea.val().lastIndexOf(string) === textArea.val().length - string.length))
+            textArea.val(textArea.val().substring(0, textArea.val().length - string.length - 1));
+        else
+        if(!isTag) countIngr++;
+        else countTag++;
+        if(!isTag) {
+            countIngr--;
+            console.log(countIngr);
+        }
+        else {
+            countTag--;
+            console.log(countTag);
+        }
+    }
+</script>
+
+</body>
+</html>
